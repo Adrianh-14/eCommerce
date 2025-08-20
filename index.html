@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tienda de Productos</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .glassmorphism {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      }
+
+      .producto-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .producto-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      }
+
+      .producto-img {
+        height: 250px;
+        object-fit: contain;
+        width: 100%;
+      }
+
+      .price {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #28a745;
+      }
+
+      .oferta-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+
+      .carousel-item-custom {
+        height: 300px;
+      }
+
+      .carousel-item-custom img {
+        height: 200px;
+        object-fit: contain;
+      }
+
+      .rating {
+        color: #ffc107;
+      }
+
+      .modal-img {
+        max-height: 400px;
+        object-fit: contain;
+      }
+
+      .section-title {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: bold;
+      }
+
+      .btn-custom {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 25px;
+        padding: 10px 25px;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        color: white;
+      }
+
+      .loading {
+        display: none;
+      }
+
+      .loading.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid py-4">
+      <!-- Header -->
+      <header class="text-center mb-5">
+        <div class="glassmorphism p-4">
+          <h1 class="display-4 text-white fw-bold mb-2">
+            <i class="bi bi-shop"></i> Tienda Premium
+          </h1>
+          <p class="lead text-white-50">
+            Descubre los mejores productos con ofertas increíbles
+          </p>
+        </div>
+      </header>
+
+      <!-- Loading Spinner -->
+      <div class="loading text-center">
+        <div
+          class="spinner-border text-light"
+          role="status"
+          style="width: 3rem; height: 3rem"
+        >
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="text-white mt-3">Cargando productos...</p>
+      </div>
+
+      <!-- Sección de Ofertas Especiales -->
+      <section class="mb-5" id="ofertas-section" style="display: none">
+        <div class="glassmorphism p-4">
+          <h2 class="section-title text-center mb-4 display-5">
+            <i class="bi bi-fire text-danger"></i> Ofertas Especiales
+          </h2>
+          <div class="row" id="ofertas-container">
+            <!-- Las ofertas se cargarán aquí -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Carrusel de Productos -->
+      <section class="mb-5" id="carousel-section" style="display: none">
+        <div class="glassmorphism p-4">
+          <h2 class="section-title text-center mb-4 display-5">
+            <i class="bi bi-stars text-warning"></i> Productos Destacados
+          </h2>
+          <div
+            id="productosCarousel"
+            class="carousel slide"
+            data-bs-ride="carousel"
+          >
+            <div class="carousel-inner" id="carousel-container">
+              <!-- Los slides se cargarán aquí -->
+            </div>
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#productosCarousel"
+              data-bs-slide="prev"
+            >
+              <span class="carousel-control-prev-icon"></span>
+              <span class="visually-hidden">Anterior</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#productosCarousel"
+              data-bs-slide="next"
+            >
+              <span class="carousel-control-next-icon"></span>
+              <span class="visually-hidden">Siguiente</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Todos los Productos -->
+      <section id="productos-section" style="display: none">
+        <div class="glassmorphism p-4">
+          <h2 class="section-title text-center mb-4 display-5">
+            <i class="bi bi-grid-3x3-gap"></i> Todos los Productos
+          </h2>
+          <div class="row" id="productos-container">
+            <!-- Los productos se cargarán aquí -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modal para detalles del producto -->
+    <div class="modal fade" id="productoModal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="modalTitle">Detalles del Producto</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6 text-center">
+                <img
+                  id="modalImage"
+                  src=""
+                  alt=""
+                  class="img-fluid modal-img rounded"
+                />
+              </div>
+              <div class="col-md-6">
+                <h4 id="modalProductTitle" class="mb-3"></h4>
+                <p class="text-muted mb-2">
+                  Categoría:
+                  <span id="modalCategory" class="badge bg-secondary"></span>
+                </p>
+                <p id="modalDescription" class="mb-3"></p>
+                <div class="mb-3">
+                  <span class="price fs-3" id="modalPrice"></span>
+                </div>
+                <div class="mb-3">
+                  <span class="rating me-2" id="modalRating"></span>
+                  <small class="text-muted"
+                    >(<span id="modalRatingCount"></span> reseñas)</small
+                  >
+                </div>
+                <button class="btn btn-custom btn-lg w-100">
+                  <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Variables globales
+      let todosLosProductos = [];
+      const API_URL = "https://fakestoreapi.com/products";
+
+      // Inicializar la aplicación
+      document.addEventListener("DOMContentLoaded", function () {
+        cargarProductos();
+      });
+
+      // Función para cargar productos desde la API
+      async function cargarProductos() {
+        try {
+          mostrarLoading(true);
+          const response = await fetch(API_URL);
+          todosLosProductos = await response.json();
+
+          // Crear las diferentes secciones
+          crearSeccionOfertas();
+          crearCarrusel();
+          mostrarTodosLosProductos();
+
+          mostrarLoading(false);
+          mostrarSecciones();
+        } catch (error) {
+          console.error("Error al cargar productos:", error);
+          mostrarError();
+        }
+      }
+
+      // Función para mostrar/ocultar loading
+      function mostrarLoading(show) {
+        const loading = document.querySelector(".loading");
+        if (show) {
+          loading.classList.add("show");
+        } else {
+          loading.classList.remove("show");
+        }
+      }
+
+      // Función para mostrar las secciones
+      function mostrarSecciones() {
+        document.getElementById("ofertas-section").style.display = "block";
+        document.getElementById("carousel-section").style.display = "block";
+        document.getElementById("productos-section").style.display = "block";
+      }
+
+      // Crear sección de ofertas (productos 1, 4 y 7)
+      function crearSeccionOfertas() {
+        const ofertas = [
+          todosLosProductos[0], // Producto 1
+          todosLosProductos[3], // Producto 4
+          todosLosProductos[6], // Producto 7
+        ];
+
+        const container = document.getElementById("ofertas-container");
+        container.innerHTML = "";
+
+        ofertas.forEach((producto) => {
+          if (producto) {
+            const col = document.createElement("div");
+            col.className = "col-lg-4 col-md-6 mb-4";
+
+            col.innerHTML = `
+                        <div class="card h-100 producto-card position-relative" onclick="mostrarDetalles(${
+                          producto.id
+                        })">
+                            <div class="oferta-badge">¡OFERTA!</div>
+                            <img src="${
+                              producto.image
+                            }" class="card-img-top producto-img p-3" alt="${
+              producto.title
+            }">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${truncarTexto(
+                                  producto.title,
+                                  50
+                                )}</h5>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="price">$${
+                                          producto.price
+                                        }</span>
+                                        <div class="rating">
+                                            ${generarEstrellas(
+                                              producto.rating.rate
+                                            )}
+                                            <small class="text-muted">(${
+                                              producto.rating.count
+                                            })</small>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-custom w-100 mt-2" onclick="event.stopPropagation(); mostrarDetalles(${
+                                      producto.id
+                                    })">
+                                        Ver Detalles
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            container.appendChild(col);
+          }
+        });
+      }
+
+      // Crear carrusel con productos aleatorios
+      function crearCarrusel() {
+        // Seleccionar 6 productos aleatorios para hacer 2 slides de 3 productos
+        const productosAleatorios = [...todosLosProductos]
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 6);
+
+        const container = document.getElementById("carousel-container");
+        container.innerHTML = "";
+
+        // Crear slides de 3 productos cada uno
+        for (let i = 0; i < productosAleatorios.length; i += 3) {
+          const slide = document.createElement("div");
+          slide.className = `carousel-item ${i === 0 ? "active" : ""}`;
+
+          const productos = productosAleatorios.slice(i, i + 3);
+
+          slide.innerHTML = `
+                    <div class="row justify-content-center">
+                        ${productos
+                          .map(
+                            (producto) => `
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 producto-card carousel-item-custom" onclick="mostrarDetalles(${
+                                  producto.id
+                                })">
+                                    <img src="${
+                                      producto.image
+                                    }" class="card-img-top p-3" alt="${
+                              producto.title
+                            }">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">${truncarTexto(
+                                          producto.title,
+                                          40
+                                        )}</h6>
+                                        <button class="btn btn-custom btn-sm" onclick="event.stopPropagation(); mostrarDetalles(${
+                                          producto.id
+                                        })">
+                                            Ver Más
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                          )
+                          .join("")}
+                    </div>
+                `;
+
+          container.appendChild(slide);
+        }
+      }
+
+      // Mostrar todos los productos
+      function mostrarTodosLosProductos() {
+        const container = document.getElementById("productos-container");
+        container.innerHTML = "";
+
+        todosLosProductos.forEach((producto) => {
+          const col = document.createElement("div");
+          col.className = "col-xl-3 col-lg-4 col-md-6 mb-4";
+
+          col.innerHTML = `
+                    <div class="card h-100 producto-card" onclick="mostrarDetalles(${
+                      producto.id
+                    })">
+                        <img src="${
+                          producto.image
+                        }" class="card-img-top producto-img p-3" alt="${
+            producto.title
+          }">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">${truncarTexto(
+                              producto.title,
+                              60
+                            )}</h6>
+                            <p class="card-text text-muted small">${truncarTexto(
+                              producto.description,
+                              80
+                            )}</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="price">$${
+                                      producto.price
+                                    }</span>
+                                    <small class="badge bg-primary">${
+                                      producto.category
+                                    }</small>
+                                </div>
+                                <div class="rating mb-2">
+                                    ${generarEstrellas(producto.rating.rate)}
+                                    <small class="text-muted">(${
+                                      producto.rating.count
+                                    })</small>
+                                </div>
+                                <button class="btn btn-custom w-100" onclick="event.stopPropagation(); mostrarDetalles(${
+                                  producto.id
+                                })">
+                                    Ver Detalles
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+          container.appendChild(col);
+        });
+      }
+
+      // Mostrar detalles del producto en modal
+      function mostrarDetalles(productId) {
+        const producto = todosLosProductos.find((p) => p.id === productId);
+        if (!producto) return;
+
+        document.getElementById("modalTitle").textContent =
+          "Detalles del Producto";
+        document.getElementById("modalImage").src = producto.image;
+        document.getElementById("modalImage").alt = producto.title;
+        document.getElementById("modalProductTitle").textContent =
+          producto.title;
+        document.getElementById("modalCategory").textContent =
+          producto.category;
+        document.getElementById("modalDescription").textContent =
+          producto.description;
+        document.getElementById(
+          "modalPrice"
+        ).textContent = `$${producto.price}`;
+        document.getElementById("modalRating").innerHTML = generarEstrellas(
+          producto.rating.rate
+        );
+        document.getElementById("modalRatingCount").textContent =
+          producto.rating.count;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("productoModal")
+        );
+        modal.show();
+      }
+
+      // Función para truncar texto
+      function truncarTexto(texto, limite) {
+        return texto.length > limite
+          ? texto.substring(0, limite) + "..."
+          : texto;
+      }
+
+      // Función para generar estrellas de rating
+      function generarEstrellas(rating) {
+        const estrellas = Math.round(rating);
+        let html = "";
+
+        for (let i = 1; i <= 5; i++) {
+          if (i <= estrellas) {
+            html += '<i class="bi bi-star-fill"></i>';
+          } else {
+            html += '<i class="bi bi-star"></i>';
+          }
+        }
+
+        return html;
+      }
+
+      // Función para mostrar error
+      function mostrarError() {
+        document.querySelector(".loading").innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Error al cargar los productos. Por favor, intenta de nuevo más tarde.
+                </div>
+            `;
+      }
+
+      // Agregar funcionalidad de teclado para el modal
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("productoModal")
+          );
+          if (modal) modal.hide();
+        }
+      });
+    </script>
+  </body>
+</html>
